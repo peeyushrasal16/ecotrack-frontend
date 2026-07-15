@@ -1,6 +1,37 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { useForm } from 'react-hook-form';
+import { api } from '../../api';
+import { toast } from 'react-toastify';
+import { loginContext } from '../../context/LoginContext';
+import { useNavigate } from 'react-router-dom';
 
 function Login() {
+
+ const {login}= useContext(loginContext);
+ const navigate=useNavigate();
+  const {register,handleSubmit,watch,formState:{errors}}=useForm();
+  const onSubmit= async (data)=>
+    {
+console.log(data);
+login(response.data.userDto,response.data.token)
+//api handling
+try
+{
+const response=await api.post('/auth/login',data) //post return promise to resolve we give async keyword
+ console.log(response);
+ toast.success("Login successful")
+
+ if(response.data.userDto.role.roleName==="ROLE_USER")
+  navigate("/user/dashboard")
+else
+  navigate("/admin/dashboard")
+}
+catch(error)
+{
+ console.log(error)
+ toast.error("Login failed")
+}
+    };
   return (
     <section className="min-vh-100 d-flex align-items-center bg-light">
       <div className="container">
@@ -20,7 +51,7 @@ function Login() {
               {/* Body */}
               <div className="card-body p-4">
 
-                <form>
+                <form onSubmit={handleSubmit(onSubmit)}>
                   {/* Email */}
                   <div className="mb-3">
                     <label className="form-label fw-semibold">
@@ -30,7 +61,9 @@ function Login() {
                       type="email"
                       className="form-control form-control-lg"
                       placeholder="Enter your email"
+                      {...register("email",{required:"Email is required"})}
                     />
+                    {errors.email && <small className='text-danger'>{errors.email.message}</small>}
                   </div>
 
                   {/* Password */}
@@ -42,7 +75,9 @@ function Login() {
                       type="password"
                       className="form-control form-control-lg"
                       placeholder="Enter your password"
+                      {...register("password",{required:"Password is required"})}
                     />
+                    {errors.password && <small className='text-danger'>{errors.password.message}</small>}
                   </div>
 
                   {/* Remember / Forgot */}

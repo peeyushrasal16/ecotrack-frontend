@@ -1,29 +1,58 @@
-import { useContext, useState } from "react";
-import { LoginContext } from "../../context/LoginContext";
+import { useContext, useEffect, useState } from "react";
+import { loginContext } from "../../context/LoginContext";
+import { api } from "../../api";
+import { toast } from "react-toastify";
 
-function AdminDashboard() {
-  const { user } = useContext(LoginContext);
+
+export function AdminDashboard() {
+  const { user } = useContext(loginContext);
 
   // Dummy requests (replace with API fetch later)
   const [requests, setRequests] = useState([
-    { id: 1, itemType: "Plastic", quantity: 5, status: "PENDING", user: "Rohit" },
-    { id: 2, itemType: "E-Waste", quantity: 2, status: "APPROVED", user: "Anita" },
-    { id: 3, itemType: "Paper", quantity: 10, status: "PENDING", user: "Aman" },
+    // { id: 1, itemType: "Plastic", quantity: 5, status: "PENDING", user: "Rohit" },
+    // { id: 2, itemType: "E-Waste", quantity: 2, status: "APPROVED", user: "Anita" },
+    // { id: 3, itemType: "Paper", quantity: 10, status: "PENDING", user: "Aman" },
   ]);
 
+  const fetchRequests=async ()=>{
+    try {
+      const response =await api.get("/requests")
+
+    } catch (error) {
+      
+    }
+  }
+
+  useEffect(()=>{
+    fetchRequests()
+  },[])
+
   // Approve request
-  const handleApprove = (id) => {
-    setRequests((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "APPROVED" } : r))
-    );
+  const handleApprove = async (id) => {
+    try {
+      const response=await api.put(`requests/${id}/approve`)
+      fetchRequests()
+      toast.success("request approved")
+      
+    } catch (error) {
+      toast.error("Something went wrong")
+      
+    }
     // TODO: Call API to approve request
   };
 
   // Reject request
-  const handleReject = (id) => {
-    setRequests((prev) =>
-      prev.map((r) => (r.id === id ? { ...r, status: "REJECTED" } : r))
-    );
+  const handleReject = async (id) => {
+    try {
+      const response=await api.put(`requests/${id}/reject?reason="admin reject"`)
+      fetchRequests()
+      toast.success("request reject")
+      
+    } catch (error) {
+      toast.error("request rejection failed")
+      
+    }
+    
     // TODO: Call API to reject request
   };
 

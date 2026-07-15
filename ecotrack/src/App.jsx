@@ -1,50 +1,68 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import {createBrowserRouter,RouterProvider} from 'react-router-dom'
-import Layout from './components/common/Layout'
-import Home from './components/Home'
-import Register from './components/user/Register'
-import Login from './components/user/Login'
-import RaiseRequest from './components/user/RaiseRequest'
+import "./App.css";
+import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
 
+import Layout from "./components/common/Layout";
+import Home from "./components/Home";
 
-const routes=createBrowserRouter([
-    {
-      path: "",
-      element: <Layout/>,
-      children: [
+import Register from "./components/user/Register";
+import Login from "./components/user/Login";
+import RaiseRequest from "./components/user/RaiseRequest";
+import UserDashboard from "./components/user/UserDashboard";
+import AdminDashboard from "./components/user/AdminDashboard";
+import HowItWorks from "./components/user/HowItWorks";
+import Contact from "./components/user/Contact";
+
+import { LoginProvider } from "./context/LoginContext";
+
+const routes = createBrowserRouter([
+  {
+    path: "/",
+    element: <Layout />,
+    children: [
       {
         index: true,
-        element: <Home/>
+        element: <Home />,
       },
       {
-        path:"register",
-        element: <Register/>
+        path: "register",
+        element: <Register />,
       },
       {
-        path:"login",
-        element: <Login/>
-      }
-      ,
+        path: "login",
+        element: <Login />,
+      },
       {
-        path:"raise-request",
-        element: <RaiseRequest/>
-      }
-    ]
-    }
-])
+        path: "raise-request",
+        element: <RaiseRequest />,
+      },
+      {
+        path: "user/dashboard",
+        element: <UserDashboard />,
+      },
+      {
+        path: "admin/dashboard",
+        element: <AdminDashboard />,
+      },
+      {
+        path: "how-it-works",
+        element: <HowItWorks />,
+      },
+      {
+        path: "contact",
+        element: <Contact />,
+      },
+    ],
+  },
+]);
 
 function App() {
-
-  
-
   return (
-    <>
-     <RouterProvider router={routes}/>
-    </>
-  )
+    <LoginProvider>
+      <ToastContainer position="top-right" autoClose={3000} />
+      <RouterProvider router={routes} />
+    </LoginProvider>
+  );
 }
 
-export default App
+export default App;
