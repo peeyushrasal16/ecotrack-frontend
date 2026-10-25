@@ -3,27 +3,41 @@ import { loginContext } from '../../context/LoginContext';
 import { toast } from 'react-toastify';
 import { useForm } from 'react-hook-form';
 import { api } from '../../api';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function RaiseRequest() {
   const {user}=useContext(loginContext);
- const {register,handleSubmit,formState:{errors},reset}=useForm();
+  const navigate = useNavigate();
+  const {register,handleSubmit,formState:{errors},reset}=useForm();
 
- 
+  const onSubmit=async(data)=>{
+    try{
+      const payload = {
+        itemType: data.itemType,
+        quantity: Number(data.quantity),
+        address: data.pickupAddress,
+      };
 
- const onSubmit=async(data)=>{
-  try{
- const response= await api.post(`/requests/${user.email}/add`,data)
- toast.success("Request Raised successfully")
- reset()
-  }
- catch(error)
- {
-console.log(error);
-toast.error("Something Went Wrong")
- }
-  
- }
+      const userEmail = user?.email || JSON.parse(localStorage.getItem("user") || "{}")?.email;
+
+      if (!userEmail) {
+        toast.error("Please login to raise a request");
+        navigate("/login");
+        return;
+      }
+
+      await api.post(`/requests/${userEmail}`, payload);
+      toast.success("Request Raised successfully");
+      reset();
+      navigate("/user/dashboard");
+    }
+    catch(error)
+    {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Something Went Wrong");
+    }
+  };
+
   return (
     <section className="bg-light py-5">
       <div className="container">
@@ -50,14 +64,15 @@ toast.error("Something Went Wrong")
                       Item Type
                     </label>
                     <select className="form-select" 
-                    {...register("itemType")}>
-                      <option>Select item type</option>
-                      <option>Plastic</option>
-                      <option>Paper</option>
-                      <option>E-Waste</option>
-                      <option>Metal</option>
-                      <option>Glass</option>
+                    {...register("itemType", { required: "Item type is required" })}>
+                      <option value="">Select item type</option>
+                      <option value="Plastic">Plastic</option>
+                      <option value="Paper">Paper</option>
+                      <option value="E-Waste">E-Waste</option>
+                      <option value="Metal">Metal</option>
+                      <option value="Glass">Glass</option>
                     </select>
+                    {errors.itemType && <small className='text-danger'>{errors.itemType.message}</small>}
                   </div>
 
                   {/* Quantity */}
@@ -69,7 +84,7 @@ toast.error("Something Went Wrong")
                       type="number"
                       className="form-control"
                       placeholder="Enter quantity"
-                      {...register("quantity",{register:"quantity is required"})}
+                      {...register("quantity",{required:"Quantity is required"})}
                     />
                     {errors.quantity && <small className='text-danger'>{errors.quantity.message}</small>}
                   </div>
@@ -83,7 +98,7 @@ toast.error("Something Went Wrong")
                       className="form-control"
                       rows="3"
                       placeholder="Enter pickup address"
-                        {...register("pickupAddress",{register:"pickupAddress is required"})}
+                        {...register("pickupAddress",{required:"Pickup address is required"})}
                     ></textarea>
                         {errors.pickupAddress && <small className='text-danger'>{errors.pickupAddress.message}</small>}
 
@@ -103,7 +118,7 @@ toast.error("Something Went Wrong")
                 {/* Info */}
                 <div className="text-center mt-4">
                   <small className="text-muted">
-                    Your request will be reviewed by admin
+                    Your request will be reviewed by admin{" "}
                     <Link to={"/user/dashboard"}>dashboard</Link>
                   </small>
                 </div>

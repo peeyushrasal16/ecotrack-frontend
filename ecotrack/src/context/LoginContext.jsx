@@ -27,8 +27,6 @@ setToken(jwtToken);
 setAuthenticated(true);
 }
 
-
-
 const logout=()=>{
     localStorage.clear()
     setUser(null)

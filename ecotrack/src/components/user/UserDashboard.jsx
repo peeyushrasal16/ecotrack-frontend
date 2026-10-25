@@ -7,20 +7,20 @@ export function UserDashboard() {
 
   const {user}=useContext(loginContext);
 
-  const [request,setRequest]=useState({})
+  const [requests,setRequests]=useState([]);
   const fetchRequests= async()=>{
 
   try {
-   const response= await api.get(`/requests/${user.email}`);
-   setRequest(response.data);
+   const response= await api.get(`/requests/${user?.email}`);
+   setRequests(Array.isArray(response.data) ? response.data : []);
   } catch (error) {
     console.log(error);
   }
   }
   useEffect(()=>{
-    if(user)
+    if(user?.email)
     fetchRequests();
-  },[])
+  },[user])
   const navigate=useNavigate();
   // Static array of requests
   // const requests = [
@@ -40,7 +40,7 @@ export function UserDashboard() {
       <div className="card shadow rounded-4 p-4 border-success">
         <h2 className="fw-bold text-success mb-3">User Dashboard</h2>
         <p className="mb-4">
-          Welcome, <strong>{user.name}</strong>
+          Welcome, <strong>{user?.name || `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || "User"}</strong>
         </p>
 
         {/* Summary Cards */}

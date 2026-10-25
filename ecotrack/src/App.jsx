@@ -12,6 +12,7 @@ import UserDashboard from "./components/user/UserDashboard";
 import AdminDashboard from "./components/user/AdminDashboard";
 import HowItWorks from "./components/user/HowItWorks";
 import Contact from "./components/user/Contact";
+import Workshops from "./components/user/Workshops";
 
 import { LoginProvider } from "./context/LoginContext";
 
@@ -35,6 +36,10 @@ const routes = createBrowserRouter([
       {
         path: "raise-request",
         element: <RaiseRequest />,
+      },
+      {
+        path: "workshops",
+        element: <Workshops />,
       },
       {
         path: "user/dashboard",

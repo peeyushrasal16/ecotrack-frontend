@@ -13,11 +13,11 @@ function Login() {
   const onSubmit= async (data)=>
     {
 console.log(data);
-login(response.data.userDto,response.data.token)
 //api handling
 try
 {
-const response=await api.post('/auth/login',data) //post return promise to resolve we give async keyword
+const response=await api.post('/auth/login',data)
+login(response.data.userDto,response.data.token) //post return promise to resolve we give async keyword
  console.log(response);
  toast.success("Login successful")
 

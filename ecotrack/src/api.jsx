@@ -7,8 +7,8 @@ export const api=axios.create({ //return object of axios and it has base url
 api.interceptors.request.use((config)=>{
    let token= localStorage.getItem("token")
    if(token)
-    configs.headers.Authorization=`Bearer ${token}` 
+    config.headers.Authorization=`Bearer ${token}` 
     return config
-},(error)=>Promise.reject(error),
-
-)
+},
+(error)=>Promise.reject(error),
+) 
